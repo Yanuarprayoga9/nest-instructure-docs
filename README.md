@@ -1,6 +1,6 @@
 # NestJS MySQL CRUD API with Hot Reload
-
 NestJS is a framework built on top of Node.js, designed for building server-side applications. It uses TypeScript and follows a modular architecture inspired by Angular. This guide helps you build a simple REST API connected to MySQL, including CRUD operations for a `User` entity, and setup for hot reload using Webpack.
+### https://sadeesha.medium.com/building-a-scalable-crud-api-with-nestjs-and-mysql-aa2d42280168 
 
 ---
 
