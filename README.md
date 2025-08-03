@@ -1,98 +1,296 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS MySQL CRUD API with Hot Reload
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS is a framework built on top of Node.js, designed for building server-side applications. It uses TypeScript and follows a modular architecture inspired by Angular. This guide helps you build a simple REST API connected to MySQL, including CRUD operations for a `User` entity, and setup for hot reload using Webpack.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🚀 Features
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+* NestJS project structure
+* MySQL database integration via TypeORM
+* Full CRUD for User entity
+* Hot Reload setup with Webpack
+* Request validation with `class-validator`
 
-## Project setup
+---
+
+## 📦 Installation & Setup
+
+### 1. Install NestJS CLI
 
 ```bash
-$ npm install
+npm i -g @nestjs/cli
 ```
 
-## Compile and run the project
+### 2. Create New Project
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+nest new nestjs-mysql
+cd nestjs-mysql
 ```
 
-## Run tests
+---
+
+## 🔁 Hot Reload Setup
+
+### Install Dev Dependencies
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm i --save-dev webpack webpack-node-externals run-script-webpack-plugin
 ```
 
-## Deployment
+### Create `webpack.config.js`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+```js
+const nodeExternals = require('webpack-node-externals');
+const RunScriptWebpackPlugin = require('run-script-webpack-plugin');
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+module.exports = {
+  entry: './src/main.ts',
+  target: 'node',
+  externals: [nodeExternals()],
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  output: {
+    filename: 'main.js',
+    path: __dirname + '/dist',
+  },
+  plugins: [new RunScriptWebpackPlugin({ name: 'main.js' })],
+};
+```
+
+### Update `package.json`
+
+```json
+"scripts": {
+  "start:dev": "webpack --watch --mode development"
+}
+```
+
+### Run with Hot Reload
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🗄️ MySQL Integration
 
-Check out a few resources that may come in handy when working with NestJS:
+### Install TypeORM & MySQL2
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+npm install --save @nestjs/typeorm typeorm mysql2
+```
 
-## Support
+### Configure TypeORM in `app.module.ts`
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-## Stay in touch
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: 'password',
+      database: 'nestjs_mysql',
+      entities: [],
+      synchronize: true,
+    }),
+  ],
+})
+export class AppModule {}
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## 👤 User CRUD Module
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Generate Module, Controller, Service
+
+```bash
+nest g module user
+nest g controller user
+nest g service user
+```
+
+### Create Entity `user.entity.ts`
+
+```ts
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  fullName: string;
+
+  @Column()
+  userName: string;
+
+  @Column()
+  password: string;
+
+  @Column()
+  email: string;
+}
+```
+
+### Update `user.module.ts`
+
+```ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './user.entity';
+import { UserController } from './user.controller';
+import { UserService } from './user.service';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([User])],
+  controllers: [UserController],
+  providers: [UserService],
+})
+export class UserModule {}
+```
+
+### Implement `user.service.ts`
+
+```ts
+@Injectable()
+export class UserService {
+  constructor(@InjectRepository(User) private repo: Repository<User>) {}
+
+  create(user: User): Promise<User> {
+    return this.repo.save(user);
+  }
+
+  findAll(): Promise<User[]> {
+    return this.repo.find();
+  }
+
+  async update(id: number, user: User): Promise<User> {
+    await this.repo.update(id, user);
+    return this.repo.findOneBy({ id });
+  }
+
+  remove(id: number): Promise<void> {
+    return this.repo.delete(id).then(() => undefined);
+  }
+}
+```
+
+### Implement `user.controller.ts`
+
+```ts
+@Controller('users')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Post()
+  create(@Body() user: User): Promise<User> {
+    return this.userService.create(user);
+  }
+
+  @Get()
+  findAll(): Promise<User[]> {
+    return this.userService.findAll();
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: number, @Body() user: User): Promise<User> {
+    return this.userService.update(+id, user);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: number): Promise<void> {
+    return this.userService.remove(+id);
+  }
+}
+```
+
+---
+
+## ✅ Request Validation
+
+### Install Validator
+
+```bash
+npm install class-validator class-transformer
+```
+
+### Create DTO `create-user.dto.ts`
+
+```ts
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+
+export class CreateUserDto {
+  @IsNotEmpty()
+  fullName: string;
+
+  @IsNotEmpty()
+  userName: string;
+
+  @MinLength(6)
+  password: string;
+
+  @IsEmail()
+  email: string;
+}
+```
+
+### Use DTO in Controller
+
+```ts
+@Post()
+create(@Body() userDto: CreateUserDto): Promise<User> {
+  return this.userService.create(userDto);
+}
+```
+
+### Enable Validation Globally
+
+```ts
+import { ValidationPipe } from '@nestjs/common';
+app.useGlobalPipes(new ValidationPipe());
+```
+
+---
+
+## 📫 Testing Endpoints
+
+Run with hot reload:
+
+```bash
+npm run start:dev
+```
+
+Test with Postman:
+
+* `GET /users`
+* `POST /users`
+* `PATCH /users/:id`
+* `DELETE /users/:id`
+
+---
+
+## 💬 Final Words
+
+You now have a fully functional REST API built with NestJS, MySQL, TypeORM, hot reload, and validation. Great for production with a few tweaks (e.g. set `synchronize: false`).
+
+Happy coding! 🚀
