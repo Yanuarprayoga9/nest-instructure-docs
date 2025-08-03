@@ -4,6 +4,7 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { HashHelper } from 'src/common/helpers/hash.helper';
 
 @Injectable()
 export class UserService {
@@ -13,11 +14,23 @@ export class UserService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    if (createUserDto.password) {
+      createUserDto.password = await HashHelper.hashPassword(
+        createUserDto.password,
+      );
+    }
+
     const user = this.userRepository.create(createUserDto);
-    return this.userRepository.save(user);
+    return await this.userRepository.save(user);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
+    if (updateUserDto.password) {
+      updateUserDto.password = await HashHelper.hashPassword(
+        updateUserDto.password,
+      );
+    }
+
     await this.userRepository.update(id, updateUserDto);
     const updatedUser = await this.userRepository.findOneBy({ id });
     return updatedUser ?? null;
